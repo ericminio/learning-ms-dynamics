@@ -1,0 +1,24 @@
+{
+  "name": "learning-ms-dynamics",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha school/*.spec.js --exit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ericminio/learning-ms-dynamics.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ericminio/learning-ms-dynamics/issues"
+  },
+  "homepage": "https://github.com/ericminio/learning-ms-dynamics#readme",
+  "dependencies": {
+    "chai": "^4.2.0",
+    "jsdom": "^15.1.1",
+    "mocha": "^6.2.0"
+  }
+}
