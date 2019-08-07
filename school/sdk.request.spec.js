@@ -1,11 +1,7 @@
 const { expect } = require('chai')
-const fs = require('fs')
-const path = require('path')
 const LocalServer = require('../support/local.server')
-const { JSDOM } = require('jsdom')
-const dom = new JSDOM(``)
-global.window = dom.window
-const request = require('../support/expose')('Sdk.request', path.join(__dirname, 'sdk.js'))
+const request = require('../support/expose')('Sdk.request', require('path').join(__dirname, 'sdk.js'))
+require('../support/fake.web')
 
 describe('Sdk Request', ()=> {
 
