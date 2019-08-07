@@ -9,6 +9,14 @@
                 display: block;
                 margin-top: 10px;
             }
+            .success {
+                background-color: rgb(199, 228, 169);
+                color: white;
+            }
+            .error {
+                background-color: red;
+                color: white;
+            }
         </style>
 
         <script>
@@ -41,7 +49,7 @@
                                 }
                             } else {
                                 returnValue.iserror = true
-                                returnValue.error = this.statusText
+                                returnValue.error = this.statusText + ':' + JSON.parse(this.response).error.message;
                             }
                             console.log('returning', returnValue);
                             resolve(returnValue)
@@ -62,6 +70,19 @@
                     query:query
                 })
                 console.log(result);
+
+                let status = document.querySelector('#status')
+                if (result.iserror) {
+                    status.innerHTML = result.error
+                    status.className = 'error'
+                    data.innerHTML = ''
+                }
+                else {
+                    status.innerHTML = 'success'
+                    status.className = 'success'
+                    let data = document.querySelector('#data')
+                    data.innerHTML = `<pre>${JSON.stringify(result.rows, null, 2)}</pre>`
+                }
             }
         </script>
     </head>
@@ -75,5 +96,7 @@
         <script type="text/javascript">
             init();
         </script>
+        <div id="status"></div>
+        <div id="data"></div>
     </body>
 </html>
