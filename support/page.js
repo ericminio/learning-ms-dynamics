@@ -37,5 +37,10 @@ Page.prototype.elements = async function(options) {
     }
     return found
 }
+Page.prototype.element = async function(selector) {
+    let options = { selector:selector, timeout:60*1000 }
+    let elements = await this.elements(options)
+    return elements[0]
+}
 
 module.exports = { Page:Page }

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha school/*.spec.js --exit"
+    "test": "mocha school/*.spec.js --exit --timeout 0"
   },
   "repository": {
     "type": "git",
