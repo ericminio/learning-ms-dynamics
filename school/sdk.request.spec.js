@@ -1,5 +1,6 @@
 const { expect } = require('chai')
 const LocalServer = require('../support/local.server')
+const { bodyOf } = require('../support/message.body')
 const request = require('../support/expose')('Sdk.request', require('path').join(__dirname, 'sdk.js'))
 require('../support/fake.web')
 
@@ -9,7 +10,7 @@ describe('Sdk Request', ()=> {
     var headers
 
     beforeEach((done)=>{
-        server = new LocalServer((req, response)=>{
+        server = new LocalServer(async (req, response)=>{
             headers = req.headers
             response.setHeader('Access-Control-Allow-Origin', '*')
             response.setHeader('Access-Control-Allow-Headers', 'OData-MaxVersion,OData-Version,Prefer')
@@ -29,12 +30,9 @@ describe('Sdk Request', ()=> {
                     response.end()
                 }
                 else if (req.method === 'POST') {
-                    var body = ''
-                    req.on('data', (chunk)=> { body += chunk })
-                    req.on('end', ()=> {
-                        response.write(JSON.stringify({ received:JSON.parse(body) }))
-                        response.end()
-                    })
+                    let body = await bodyOf(req)
+                    response.write(JSON.stringify({ received:JSON.parse(body) }))
+                    response.end()
                 }
                 else {
                     response.end()
