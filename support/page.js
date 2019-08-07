@@ -18,6 +18,9 @@ Page.prototype.list = async function(selector) {
     let elements = await this.driver.findElements(By.css(selector))
     return elements
 }
+Page.prototype.source = async function() {
+    return await this.driver.getPageSource()
+}
 Page.prototype.wait = async function(ms) {
     await this.driver.sleep(ms)
 }

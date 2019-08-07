@@ -3,7 +3,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Fetch Xml</title>
+        <title>SDK</title>
         <style>
             label, button {
                 display: block;
@@ -53,6 +53,38 @@
                     else { request.send() }
                 })
             }
+            let sendDelete = (options)=> {
+                return new Promise((resolve, reject)=> {
+                    var request = new window.XMLHttpRequest()
+                    request.open(options.method, encodeURI(`${options.uri}/${options.entityNamePlural}(${options.id})`), true)
+                    request.setRequestHeader("OData-MaxVersion", "4.0");
+                    request.setRequestHeader("OData-Version", "4.0");
+                    request.setRequestHeader("Accept", "application/json");
+                    request.setRequestHeader("Content-Type", "application/json; charset=utf-8");
+                    request.setRequestHeader("Prefer", "odata.maxpagesize=10");
+                    request.onreadystatechange = function () {
+                        if (this.readyState === 4) {
+                            request.onreadystatechange = null;
+                            switch (this.status) {
+                                case 200:
+                                case 204:
+                                    resolve(this);
+                                    break;
+                                default:
+                                    var error;
+                                    try {
+                                        error = JSON.parse(request.response).error;
+                                    } catch (e) {
+                                        error = new Error("Unexpected Error");
+                                    }
+                                    reject(error);
+                                    break;
+                            }
+                        }
+                    };
+                    request.send()
+                })
+            }
 
             let execute = async (document)=> {
                 let entityNamePlural = document.querySelector('#entityNamePlural').value
@@ -62,12 +94,38 @@
                 let data = JSON.parse(document.querySelector('#data').value)
                 console.log(data);
 
-                var uri = `${window.location.origin}/api/data/v9.0/`
                 let result = await send({
                     method:method,
-                    uri:uri,
+                    uri:`${window.location.origin}/api/data/v9.0/`,
                     entityNamePlural:entityNamePlural,
                     data:data
+                })
+                console.log(result);
+
+                let status = document.querySelector('#status')
+                if (result.iserror) {
+                    status.innerHTML = result.error
+                    status.className = 'error'
+                    data.innerHTML = ''
+                }
+                else {
+                    status.innerHTML = 'success'
+                    status.className = 'success'
+                    let message = document.querySelector('#message')
+                    message.innerHTML = `<pre>${JSON.stringify(result.rows, null, 2)}</pre>`
+                }
+            }
+            let executeDelete = async (document)=> {
+                let entityNamePlural = document.querySelector('#entityNamePlural').value
+                console.log(entityNamePlural);
+                let id = document.querySelector('#id').value
+                console.log(id);
+
+                let result = await sendDelete({
+                    method: 'DELETE',
+                    uri:`${window.location.origin}/api/data/v9.0/`,
+                    entityNamePlural:entityNamePlural,
+                    id:id
                 })
                 console.log(result);
 
@@ -89,13 +147,20 @@
     <body>
         <label>Entity name plural</label>
         <input id="entityNamePlural" value="accounts" />
+        <hr/>
+
         <label>Method</label>
         <input id="method" value="POST" />
         <label>Query</label>
         <textarea id="data" rows="20" cols="80"></textarea>
-
         <button type="button" id="execute" onclick="execute(document)">Send</button>
+        <hr/>
 
+        <label>id to be deleted</label>
+        <input id="id" size="45"/>
+        <button type="button" id="delete" onclick="executeDelete(document)">Delete</button>
+        <hr/>
+        
         <div id="status"></div>
         <div id="message"></div>
 
