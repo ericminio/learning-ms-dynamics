@@ -5,8 +5,7 @@ const LocalServer = require('../support/local.server')
 const { JSDOM } = require('jsdom')
 const dom = new JSDOM(``)
 global.window = dom.window
-const sut = fs.readFileSync(path.join(__dirname, 'sdk.js')).toString()
-const request = (new Function(sut + '; return Sdk.request;'))()
+const request = require('../support/expose')('Sdk.request', path.join(__dirname, 'sdk.js'))
 
 describe('Sdk Request', ()=> {
 
