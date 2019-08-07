@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Fetch Xml</title>
+        <style>
+            label, button {
+                display: block;
+                margin-top: 10px;
+            }
+        </style>
+
+        <script>
+            let init = ()=> {
+                document.querySelector('#query').value = `
+<fetch distinct='false' mapping='logical' aggregate='true'>
+    <entity name='account'>
+        <attribute name='name' aggregate='count' alias='accountCount'/>
+    </entity>
+</fetch>
+                    `.trim();
+                    document.querySelector('#entityNamePlural').value = 'accounts'
+            }
+
+            let fetch = async (options)=> {
+                return new Promise((resolve, reject)=> {
+                    var returnValue = { iserror: false, rows: [] };
+                    var target = `${window.location.origin}/api/data/v9.0/${options.entityNamePlural}?fetchXml=${encodeURIComponent(options.query)}`
+                    console.log('fetching', options.entityNamePlural);
+                    var req = new XMLHttpRequest();
+                    req.open('GET', target, true)
+                    req.setRequestHeader("Prefer", 'odata.include-annotations="*"')
+                    req.onreadystatechange = function() {
+                        if (this.readyState === 4) {
+                            req.onreadystatechange = null
+                            if (this.status === 200) {
+                                var results = JSON.parse(this.response)
+                                if (results.value !== undefined && results.value.length > 0) {
+                                    returnValue.rows = results.value;
+                                }
+                            } else {
+                                returnValue.iserror = true
+                                returnValue.error = this.statusText
+                            }
+                            console.log('returning', returnValue);
+                            resolve(returnValue)
+                        }
+                    };
+                    req.send()
+                })
+            }
+
+            let executeQuery = async (document)=> {
+                let query = document.querySelector('#query').value
+                console.log(query);
+                let entityNamePlural = document.querySelector('#entityNamePlural').value
+                console.log(entityNamePlural);
+
+                let result = await fetch({
+                    entityNamePlural:entityNamePlural,
+                    query:query
+                })
+                console.log(result);
+            }
+        </script>
+    </head>
+    <body>
+        <label>Entity name plural</label>
+        <input id="entityNamePlural" />
+        <label>Query</label>
+        <textarea id="query" rows="20" cols="80"></textarea>
+        <button type="button" id="fetch" onclick="executeQuery(document)">Fetch</button>
+
+        <script type="text/javascript">
+            init();
+        </script>
+    </body>
+</html>
