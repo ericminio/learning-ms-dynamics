@@ -1,7 +1,7 @@
 const { expect } = require('chai')
 const LocalServer = require('../support/local.server')
 const { bodyOf } = require('../support/message.body')
-const request = require('../support/expose')('Sdk.request', require('path').join(__dirname, 'sdk.js'))
+const request = require('../support/expose')('Sdk.request', require('path').join(__dirname, '..', 'Web Resources', 'sdk.js'))
 require('../support/fake.web')
 
 describe('Sdk Request', ()=> {
