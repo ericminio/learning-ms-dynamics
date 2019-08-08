@@ -16,6 +16,7 @@ describe('Round trip', ()=> {
     it('works', async ()=> {
         page = new Page(driver)
         await connect(page)
+        await page.open(`${process.env.DYNAMICS_URL}${process.env.DYNAMICS_SDK_WEB_URI}`)
         await deletePreviousTestingData(page)
         await createNewAccount(page)
 
@@ -49,7 +50,6 @@ describe('Round trip', ()=> {
                     </filter>
                 </entity>
             </fetch>`;
-        await page.open(`${process.env.DYNAMICS_URL}${process.env.DYNAMICS_SDK_WEB_URI}`)
         let read = await page.element('#activate-read')
         read.click()
         let query = await page.element('#fetch-xml-query')
@@ -64,7 +64,6 @@ describe('Round trip', ()=> {
         return data
     }
     let createNewAccount = async (page)=> {
-        await page.open(`${process.env.DYNAMICS_URL}${process.env.DYNAMICS_SDK_WEB_URI}`)
         let creation = await page.element('#activate-create')
         creation.click()
         let data = await page.element('#creation-payload')
@@ -87,7 +86,6 @@ describe('Round trip', ()=> {
                     </filter>
                 </entity>
             </fetch>`;
-        await page.open(`${process.env.DYNAMICS_URL}${process.env.DYNAMICS_SDK_WEB_URI}`)
         let read = await page.element('#activate-read')
         read.click()
         let query = await page.element('#fetch-xml-query')
@@ -103,11 +101,10 @@ describe('Round trip', ()=> {
             data = JSON.parse(content).response.value
         }
 
+        let deletion = await page.element('#activate-delete')
+        deletion.click()
         for (var i=0; i<data.length; i++) {
             var accountid = data[i].accountid
-            await page.open(`${process.env.DYNAMICS_URL}${process.env.DYNAMICS_SDK_WEB_URI}`)
-            let deletion = await page.element('#activate-delete')
-            deletion.click()
             let id = await page.element('#id-to-be-deleted')
             await id.clear()
             await id.sendKeys(accountid)
