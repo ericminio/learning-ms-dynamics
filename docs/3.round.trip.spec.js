@@ -20,9 +20,9 @@ describe('Round trip', ()=> {
         await createNewAccount(page)
 
         let data = await readWithFetchXml(page)
-        expect(data[0].name).to.equal('round trip testing')
+        expect(data.response.value[0].name).to.equal('round trip testing')
 
-        let id = data[0].accountid
+        let id = data.response.value[0].accountid
         let account = await readWithSimpleGet(page, id)
         expect(account.name).to.equal('round trip testing')
     })
@@ -100,7 +100,7 @@ describe('Round trip', ()=> {
         let content = await result.getText()
         let data = []
         if (content != 'undefined') {
-            data = JSON.parse(content)
+            data = JSON.parse(content).response.value
         }
 
         for (var i=0; i<data.length; i++) {

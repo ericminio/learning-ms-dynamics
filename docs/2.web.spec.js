@@ -29,6 +29,6 @@ describe('Web interaction', ()=> {
         let content = await result.getText()
         let data = JSON.parse(content)
 
-        expect(data[0].accountCount).to.be.gt(1)
+        expect(data.response.value[0].accountCount).to.be.gt(1)
     })
 })

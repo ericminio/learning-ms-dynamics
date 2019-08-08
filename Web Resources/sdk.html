@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8">
@@ -27,67 +26,57 @@
         </style>
         <script src="sdk.js" charset="utf-8"></script>
         <script>
+            let please = async (action, document)=> {
+                let status = document.querySelector('#status')
+                let message = document.querySelector('#message')
+                try {
+                    let result = await action
+                    console.log('result', result);
+                    status.innerHTML = 'success'
+                    status.className = 'success'
+                    message.innerHTML = `<pre>${JSON.stringify({
+                        status:result.status,
+                        text:result.statusText,
+                        response:result.response.length > 0 ? JSON.parse(result.response) : ''
+                    }, null, 2)}</pre>`
+                }
+                catch (error) {
+                    console.log('error', error);
+                    status.innerHTML = error.message
+                    status.className = 'error'
+                    message.innerHTML = ''
+                }
+            }
             let executeCreate = async (document)=> {
                 clearResults()
                 let entityNamePlural = document.querySelector('#entityNamePlural').value
                 let payload = JSON.parse(document.querySelector('#creation-payload').value)
 
-                await execute({
+                please(Sdk.request({
                     method:'POST',
                     uri:`${window.location.origin}/api/data/v9.0/${entityNamePlural}`,
                     data:payload
-                }, document)
+                }), document)
             }
             let executeRead = async (document)=> {
                 clearResults()
                 let entityNamePlural = document.querySelector('#entityNamePlural').value
                 let query = document.querySelector('#fetch-xml-query').value
 
-                let status = document.querySelector('#status')
-                let message = document.querySelector('#message')
-                try {
-                    let result = await Sdk.fetch({
-                        entityNamePlural:entityNamePlural,
-                        query:query
-                    })
-                    console.log('result', result);
-                    status.innerHTML = 'success'
-                    status.className = 'success'
-                    message.innerHTML = `<pre>${JSON.stringify(JSON.parse(result.response).value, null, 2)}</pre>`
-                }
-                catch (error) {
-                    console.log('error', error);
-                    status.innerHTML = error.message
-                    status.className = 'error'
-                    message.innerHTML = ''
-                }
+                please(Sdk.fetch({
+                    entityNamePlural:entityNamePlural,
+                    query:query
+                }), document)
             }
             let executeDelete = async (document)=> {
                 clearResults()
                 let entityNamePlural = document.querySelector('#entityNamePlural').value
                 let id = document.querySelector('#id-to-be-deleted').value
 
-                await execute({
+                please(Sdk.request({
                     method: 'DELETE',
                     uri:`${window.location.origin}/api/data/v9.0/${entityNamePlural}(${id})`
-                }, document)
-            }
-            let execute = async (options, document)=> {
-                let status = document.querySelector('#status')
-                let message = document.querySelector('#message')
-                try {
-                    let result = await Sdk.request(options)
-                    console.log('result', result);
-                    status.innerHTML = 'success'
-                    status.className = 'success'
-                    message.innerHTML = `<pre>${JSON.stringify({ status:result.status, text:result.statusText}, null, 2)}</pre>`
-                }
-                catch (error) {
-                    console.log('error', error);
-                    status.innerHTML = error.message
-                    status.className = 'error'
-                    message.innerHTML = ''
-                }
+                }), document)
             }
         </script>
         <script>
