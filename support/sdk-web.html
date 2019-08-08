@@ -23,7 +23,7 @@
             let send = (options)=> {
                 return new Promise((resolve, reject)=> {
                     var request = new window.XMLHttpRequest()
-                    request.open(options.method, encodeURI(`${options.uri}/${options.entityNamePlural}`), true)
+                    request.open(options.method, encodeURI(`${options.uri}`), true)
                     request.setRequestHeader("OData-MaxVersion", "4.0");
                     request.setRequestHeader("OData-Version", "4.0");
                     request.setRequestHeader("Accept", "application/json");
@@ -53,38 +53,6 @@
                     else { request.send() }
                 })
             }
-            let sendDelete = (options)=> {
-                return new Promise((resolve, reject)=> {
-                    var request = new window.XMLHttpRequest()
-                    request.open(options.method, encodeURI(`${options.uri}/${options.entityNamePlural}(${options.id})`), true)
-                    request.setRequestHeader("OData-MaxVersion", "4.0");
-                    request.setRequestHeader("OData-Version", "4.0");
-                    request.setRequestHeader("Accept", "application/json");
-                    request.setRequestHeader("Content-Type", "application/json; charset=utf-8");
-                    request.setRequestHeader("Prefer", "odata.maxpagesize=10");
-                    request.onreadystatechange = function () {
-                        if (this.readyState === 4) {
-                            request.onreadystatechange = null;
-                            switch (this.status) {
-                                case 200:
-                                case 204:
-                                    resolve(this);
-                                    break;
-                                default:
-                                    var error;
-                                    try {
-                                        error = JSON.parse(request.response).error;
-                                    } catch (e) {
-                                        error = new Error("Unexpected Error");
-                                    }
-                                    reject(error);
-                                    break;
-                            }
-                        }
-                    };
-                    request.send()
-                })
-            }
 
             let execute = async (document)=> {
                 let entityNamePlural = document.querySelector('#entityNamePlural').value
@@ -96,8 +64,7 @@
 
                 let result = await send({
                     method:method,
-                    uri:`${window.location.origin}/api/data/v9.0/`,
-                    entityNamePlural:entityNamePlural,
+                    uri:`${window.location.origin}/api/data/v9.0/${entityNamePlural}`,
                     data:data
                 })
                 console.log(result);
@@ -121,11 +88,9 @@
                 let id = document.querySelector('#id').value
                 console.log(id);
 
-                let result = await sendDelete({
+                let result = await send({
                     method: 'DELETE',
-                    uri:`${window.location.origin}/api/data/v9.0/`,
-                    entityNamePlural:entityNamePlural,
-                    id:id
+                    uri:`${window.location.origin}/api/data/v9.0/${entityNamePlural}(${id})`
                 })
                 console.log(result);
 
@@ -160,7 +125,7 @@
         <input id="id" size="45"/>
         <button type="button" id="delete" onclick="executeDelete(document)">Delete</button>
         <hr/>
-        
+
         <div id="status"></div>
         <div id="message"></div>
 
