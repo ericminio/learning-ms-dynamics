@@ -1,10 +1,10 @@
 const { expect } = require('chai')
 const { Builder, By } = require('selenium-webdriver')
 const { Page } = require('../support/pages/page')
-const connection = require('../support/activities/connection')
-const deleteAccounts = require('../support/activities/delete.accounts')
-const createAccount = require('../support/activities/create.account')
-const selectAccounts = require('../support/activities/select.accounts')
+const {
+    connection,
+    deleteAccounts, createAccount, selectAccounts
+} = require('../support/activities')
 
 describe('Round trip', ()=> {
 

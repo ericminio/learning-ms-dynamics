@@ -1,4 +1,4 @@
-const LoginPage = require('../pages/login')
+const { LoginPage } = require('../pages')
 
 let connection = async function(driver) {
     let page = await LoginPage(driver)

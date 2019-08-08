@@ -1,4 +1,4 @@
-const SdkPage = require('../pages/sdk')
+const { SdkPage } = require('../pages')
 
 let deleteAccounts = async (options, driver)=> {
     let page = await SdkPage(driver)

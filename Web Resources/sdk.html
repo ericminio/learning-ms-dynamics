@@ -11,6 +11,9 @@
                 display: block;
                 margin-top: 10px;
             }
+            textarea {
+                width: 100%
+            }
             .success {
                 background-color: rgb(199, 228, 169);
                 color: white;
@@ -108,13 +111,13 @@
 
         <section id="create" class="crud">
             <label>Creation Payload</label>
-            <textarea id="creation-payload" rows="20" cols="80"></textarea>
+            <textarea id="creation-payload" rows="20"></textarea>
             <button type="button" id="create-button" onclick="executeCreate(document)">Create record</button>
         </section>
 
         <section id="read" class="crud">
             <label>Read</label>
-            <textarea id="fetch-xml-query" rows="20" cols="80"></textarea>
+            <textarea id="fetch-xml-query" rows="20"></textarea>
             <button type="button" id="read-button" onclick="executeRead(document)">Fetch</button>
         </section>
 
