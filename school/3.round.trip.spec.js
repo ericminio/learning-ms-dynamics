@@ -65,7 +65,7 @@ describe('Round trip', ()=> {
         await page.open(`${process.env.DYNAMICS_URL}${process.env.DYNAMICS_SDK_WEB_URI}`)
         let data = await page.element('#data')
         await data.clear()
-        await data.sendKeys(JSON.stringify({ name:'round trip testing' }))
+        await data.sendKeys(JSON.stringify({ name:'round trip testing' }, null, 2))
         let execute = await page.element('#execute')
         execute.click()
         await page.wait(3 *1000)
@@ -91,7 +91,11 @@ describe('Round trip', ()=> {
         fetch.click()
         await page.wait(3 *1000)
         let result = await page.element('#data')
-        let data = JSON.parse(await result.getText())
+        let text = await result.getText()
+        let data = []
+        if (text != 'undefined') {
+            data = JSON.parse(text)
+        }
 
         for (var i=0; i<data.length; i++) {
             var accountid = data[i].accountid
@@ -101,7 +105,7 @@ describe('Round trip', ()=> {
             await id.sendKeys(accountid)
             let deleteButton = await page.element('#delete')
             await deleteButton.click()
-            await page.wait(3 *1000)
+            await page.wait(1 *1000)
             let status = await page.element('#status')
             let message = await status.getText()
             expect(message).to.equal('success')
