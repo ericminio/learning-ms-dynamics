@@ -20,51 +20,35 @@
         </style>
         <script src="sdk.js" charset="utf-8"></script>
         <script>
-            let execute = async (document)=> {
+            let executeQuery = async (document)=> {
                 let entityNamePlural = document.querySelector('#entityNamePlural').value
-                console.log(entityNamePlural);
                 let method = document.querySelector('#method').value
-                console.log(method);
                 let data = JSON.parse(document.querySelector('#data').value)
-                console.log(data);
 
-                let status = document.querySelector('#status')
-                let message = document.querySelector('#message')
-                try {
-                    let result = await Sdk.request({
-                        method:method,
-                        uri:`${window.location.origin}/api/data/v9.0/${entityNamePlural}`,
-                        data:data
-                    })
-                    console.log(result);
-                    status.innerHTML = 'success'
-                    status.className = 'success'
-                    message.innerHTML = `<pre>${JSON.stringify(result.rows, null, 2)}</pre>`
-                }
-                catch (error) {
-                    console.log('error', error);
-                    status.innerHTML = error.message
-                    status.className = 'error'
-                    message.innerHTML = ''
-                }
+                await execute({
+                    method:method,
+                    uri:`${window.location.origin}/api/data/v9.0/${entityNamePlural}`,
+                    data:data
+                }, document)
             }
             let executeDelete = async (document)=> {
                 let entityNamePlural = document.querySelector('#entityNamePlural').value
-                console.log(entityNamePlural);
                 let id = document.querySelector('#id').value
-                console.log(id);
 
+                await execute({
+                    method: 'DELETE',
+                    uri:`${window.location.origin}/api/data/v9.0/${entityNamePlural}(${id})`
+                }, document)
+            }
+            let execute = async (options, document)=> {
                 let status = document.querySelector('#status')
                 let message = document.querySelector('#message')
                 try {
-                    let result = await Sdk.request({
-                        method: 'DELETE',
-                        uri:`${window.location.origin}/api/data/v9.0/${entityNamePlural}(${id})`
-                    })
-                    console.log(result);
+                    let result = await Sdk.request(options)
+                    console.log('result', result);
                     status.innerHTML = 'success'
                     status.className = 'success'
-                    message.innerHTML = `<pre>${JSON.stringify(result.rows, null, 2)}</pre>`
+                    message.innerHTML = `<pre>${JSON.stringify({ status:result.status, text:result.statusText}, null, 2)}</pre>`
                 }
                 catch (error) {
                     console.log('error', error);
@@ -84,7 +68,7 @@
         <input id="method" value="POST" />
         <label>Query</label>
         <textarea id="data" rows="20" cols="80"></textarea>
-        <button type="button" id="execute" onclick="execute(document)">Send</button>
+        <button type="button" id="execute" onclick="executeQuery(document)">Send</button>
         <hr/>
 
         <label>id to be deleted</label>

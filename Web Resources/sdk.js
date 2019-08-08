@@ -3,6 +3,7 @@ typeof Sdk === 'undefined' && (Sdk = { __namespace: !0 });
 (function(){
 
     this.request = async (options)=> {
+        console.log('request', options);
         return new Promise((resolve, reject)=> {
             var xhr = new window.XMLHttpRequest()
             xhr.open(options.method, encodeURI(options.uri), true)
