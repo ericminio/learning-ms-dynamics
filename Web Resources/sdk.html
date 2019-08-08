@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>SDK</title>
+        <style>
+            section {
+                border-bottom: 1px solid black;
+            }
+            label, button {
+                display: block;
+                margin-top: 10px;
+            }
+            .success {
+                background-color: rgb(199, 228, 169);
+                color: white;
+            }
+            .choice {
+                display: inline-block;
+                width: 150px;
+            }
+            .error {
+                background-color: red;
+                color: white;
+            }
+        </style>
+        <script src="sdk.js" charset="utf-8"></script>
+        <script>
+            let executeCreate = async (document)=> {
+                clearResults()
+                let entityNamePlural = document.querySelector('#entityNamePlural').value
+                let payload = JSON.parse(document.querySelector('#creation-payload').value)
+
+                await execute({
+                    method:'POST',
+                    uri:`${window.location.origin}/api/data/v9.0/${entityNamePlural}`,
+                    data:payload
+                }, document)
+            }
+            let executeRead = async (document)=> {
+                clearResults()
+                let entityNamePlural = document.querySelector('#entityNamePlural').value
+                let query = document.querySelector('#fetch-xml-query').value
+
+                let status = document.querySelector('#status')
+                let message = document.querySelector('#message')
+                try {
+                    let result = await Sdk.fetch({
+                        entityNamePlural:entityNamePlural,
+                        query:query
+                    })
+                    console.log('result', result);
+                    status.innerHTML = 'success'
+                    status.className = 'success'
+                    message.innerHTML = `<pre>${JSON.stringify(JSON.parse(result.response).value, null, 2)}</pre>`
+                }
+                catch (error) {
+                    console.log('error', error);
+                    status.innerHTML = error.message
+                    status.className = 'error'
+                    message.innerHTML = ''
+                }
+            }
+            let executeDelete = async (document)=> {
+                clearResults()
+                let entityNamePlural = document.querySelector('#entityNamePlural').value
+                let id = document.querySelector('#id-to-be-deleted').value
+
+                await execute({
+                    method: 'DELETE',
+                    uri:`${window.location.origin}/api/data/v9.0/${entityNamePlural}(${id})`
+                }, document)
+            }
+            let execute = async (options, document)=> {
+                let status = document.querySelector('#status')
+                let message = document.querySelector('#message')
+                try {
+                    let result = await Sdk.request(options)
+                    console.log('result', result);
+                    status.innerHTML = 'success'
+                    status.className = 'success'
+                    message.innerHTML = `<pre>${JSON.stringify({ status:result.status, text:result.statusText}, null, 2)}</pre>`
+                }
+                catch (error) {
+                    console.log('error', error);
+                    status.innerHTML = error.message
+                    status.className = 'error'
+                    message.innerHTML = ''
+                }
+            }
+        </script>
+        <script>
+            let choose = (me)=> {
+                let sections = document.querySelectorAll('.crud')
+                sections.forEach((section)=> {
+                    section.style.display = (`activate-${section.id}` == me.id) ? 'block' : 'none'
+                })
+            }
+            let clearResults = ()=> {
+                let status = document.querySelector('#status')
+                let message = document.querySelector('#message')
+                status.innerHTML = ''
+                message.innerHTML = ''
+            }
+        </script>
+    </head>
+    <body>
+        <section id="choice-area">
+            <label>Entity name plural</label>
+            <input id="entityNamePlural" value="accounts" />
+
+            <div>
+                <button id="activate-create" class="choice" onclick="choose(this)">Create</button>
+                <button id="activate-read" class="choice" onclick="choose(this)">Read</button>
+                <button id="activate-delete" class="choice" onclick="choose(this)">Delete</button>
+            </div>
+        </section>
+
+        <section id="create" class="crud">
+            <label>Creation Payload</label>
+            <textarea id="creation-payload" rows="20" cols="80"></textarea>
+            <button type="button" id="create-button" onclick="executeCreate(document)">Create record</button>
+        </section>
+
+        <section id="read" class="crud">
+            <label>Read</label>
+            <textarea id="fetch-xml-query" rows="20" cols="80"></textarea>
+            <button type="button" id="read-button" onclick="executeRead(document)">Fetch</button>
+        </section>
+
+        <section id="delete" class="crud">
+            <label>Deletion</label>
+            <input id="id-to-be-deleted" size="45" placeholder="record id"/>
+            <button type="button" id="delete-button" onclick="executeDelete(document)">Delete record</button>
+        </section>
+
+        <section id="results">
+            <label>Result</label>
+            <div id="status"></div>
+            <div id="message"></div>
+        </section>
+
+        <script type="text/javascript">
+            document.querySelector('#creation-payload').value = JSON.stringify({
+                name: 'testing ' + new Date().getTime()
+            }, null, 2)
+            document.querySelector('#fetch-xml-query').value = `
+<fetch distinct='false' mapping='logical' aggregate='true'>
+    <entity name='account'>
+        <attribute name='name' aggregate='count' alias='accountCount'/>
+    </entity>
+</fetch>
+            `.trim();
+
+            choose({id:'activate-create'})
+        </script>
+
+    </body>
+</html>

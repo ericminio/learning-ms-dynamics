@@ -7,7 +7,6 @@ describe('prerequisites', ()=> {
     it('needs target urls', ()=> {
         expect(process.env.DYNAMICS_URL).not.to.equal(undefined)
         expect(process.env.DYNAMICS_APP_ID).not.to.equal(undefined)
-        expect(process.env.DYNAMICS_FETCH_XML_TESTER_URI).not.to.equal(undefined)
         expect(process.env.DYNAMICS_SDK_WEB_URI).not.to.equal(undefined)
     })
     it('needs credentials', ()=> {
