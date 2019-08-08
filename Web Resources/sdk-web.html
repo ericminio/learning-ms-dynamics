@@ -28,24 +28,24 @@
                 let data = JSON.parse(document.querySelector('#data').value)
                 console.log(data);
 
-                let result = await Sdk.request({
-                    method:method,
-                    uri:`${window.location.origin}/api/data/v9.0/${entityNamePlural}`,
-                    data:data
-                })
-                console.log(result);
-
                 let status = document.querySelector('#status')
-                if (result.iserror) {
-                    status.innerHTML = result.error
-                    status.className = 'error'
-                    data.innerHTML = ''
-                }
-                else {
+                let message = document.querySelector('#message')
+                try {
+                    let result = await Sdk.request({
+                        method:method,
+                        uri:`${window.location.origin}/api/data/v9.0/${entityNamePlural}`,
+                        data:data
+                    })
+                    console.log(result);
                     status.innerHTML = 'success'
                     status.className = 'success'
-                    let message = document.querySelector('#message')
                     message.innerHTML = `<pre>${JSON.stringify(result.rows, null, 2)}</pre>`
+                }
+                catch (error) {
+                    console.log('error', error);
+                    status.innerHTML = error.message
+                    status.className = 'error'
+                    message.innerHTML = ''
                 }
             }
             let executeDelete = async (document)=> {
@@ -54,23 +54,23 @@
                 let id = document.querySelector('#id').value
                 console.log(id);
 
-                let result = await Sdk.request({
-                    method: 'DELETE',
-                    uri:`${window.location.origin}/api/data/v9.0/${entityNamePlural}(${id})`
-                })
-                console.log(result);
-
                 let status = document.querySelector('#status')
-                if (result.iserror) {
-                    status.innerHTML = result.error
-                    status.className = 'error'
-                    data.innerHTML = ''
-                }
-                else {
+                let message = document.querySelector('#message')
+                try {
+                    let result = await Sdk.request({
+                        method: 'DELETE',
+                        uri:`${window.location.origin}/api/data/v9.0/${entityNamePlural}(${id})`
+                    })
+                    console.log(result);
                     status.innerHTML = 'success'
                     status.className = 'success'
-                    let message = document.querySelector('#message')
                     message.innerHTML = `<pre>${JSON.stringify(result.rows, null, 2)}</pre>`
+                }
+                catch (error) {
+                    console.log('error', error);
+                    status.innerHTML = error.message
+                    status.className = 'error'
+                    message.innerHTML = ''
                 }
             }
         </script>

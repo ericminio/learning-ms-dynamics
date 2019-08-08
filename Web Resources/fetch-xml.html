@@ -26,23 +26,23 @@
                 let entityNamePlural = document.querySelector('#entityNamePlural').value
                 console.log(entityNamePlural);
 
-                let result = await Sdk.fetch({
-                    entityNamePlural:entityNamePlural,
-                    query:query
-                })
-                console.log(result);
-
                 let status = document.querySelector('#status')
-                if (result.iserror) {
-                    status.innerHTML = result.error
-                    status.className = 'error'
-                    data.innerHTML = ''
-                }
-                else {
+                let data = document.querySelector('#data')
+                try {
+                    let result = await Sdk.fetch({
+                        entityNamePlural:entityNamePlural,
+                        query:query
+                    })
+                    console.log('result', result);
                     status.innerHTML = 'success'
                     status.className = 'success'
-                    let data = document.querySelector('#data')
-                    data.innerHTML = `<pre>${JSON.stringify(result.rows, null, 2)}</pre>`
+                    data.innerHTML = `<pre>${JSON.stringify(JSON.parse(result.response).value, null, 2)}</pre>`
+                }
+                catch (error) {
+                    console.log('error', error);
+                    status.innerHTML = error.message
+                    status.className = 'error'
+                    data.innerHTML = ''
                 }
             }
         </script>
