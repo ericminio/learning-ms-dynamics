@@ -1,6 +1,6 @@
 const { expect } = require('chai')
 const { Builder, By } = require('selenium-webdriver')
-const { Page } = require('../support/page')
+const { Page } = require('../support/pages/page')
 
 describe('Web interaction', ()=> {
 
