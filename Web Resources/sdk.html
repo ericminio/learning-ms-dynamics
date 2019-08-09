@@ -102,6 +102,48 @@
                 })
             }
         </script>
+        <script>
+            let cleanifyXml = (xml)=> {
+                var input = xml.split(/>/).map(tag => tag.trim()+'>')
+                var nodes = []
+                for (var i=0; i<input.length; i++) {
+                    var tag = input[i]
+                    if (tag && tag.indexOf('<') !==0) {
+                        var content = tag.substring(0, tag.indexOf('<'))
+                        tag = tag.substring(tag.indexOf('<'))
+                        nodes.push(content)
+                    }
+                    nodes.push(tag)
+                }
+                var formated = ''
+                var indent = 0
+                var previousTag
+                for (var i=0; i<nodes.length; i++) {
+                    var tag = nodes[i]
+                    if (tag.indexOf('</') == 0) {
+                        indent --
+                    }
+                    else {
+                        if (previousTag && !previousTag.endsWith('/>')) {
+                            indent ++
+                        }
+                    }
+                    if (tag.length > 1) {
+                        var indentation = ''
+                        for (var n=0; n<indent; n++) {
+                            indentation += '    '
+                        }
+                        formated += indentation + tag + '\n'
+                    }
+                    previousTag = tag
+                }
+                return formated
+            }
+            let format = (document)=>{
+                var xml = document.querySelector('#fetch-xml-query').value
+                document.querySelector('#fetch-xml-query').value = cleanifyXml(xml)
+            }
+        </script>
     </head>
     <body>
         <section id="choice-area">
@@ -123,6 +165,7 @@
 
         <section id="read" class="crud">
             <label>Read</label>
+            <button onclick="format(document)">format</button>
             <textarea id="fetch-xml-query" rows="20"></textarea>
             <button type="button" id="read-button" class="action" onclick="executeRead(document)">Fetch</button>
         </section>
