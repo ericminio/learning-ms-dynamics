@@ -4,6 +4,19 @@ module.exports = async (driver)=>{
     var page = new Page(driver)
     await page.open(`${process.env.DYNAMICS_URL}${process.env.DYNAMICS_SDK_WEB_URI}`)
 
+    page.waitForResults = async function() {
+        let tryAgain = true
+        while (tryAgain) {
+            let message = await this.element('#message')
+            let content = await message.getText()
+            if (content.length == 0){
+                await this.driver.sleep(500)
+            }
+            else {
+                tryAgain = false
+            }
+        }
+    }
     page.setCollection = async function(collection) {
         let element = await page.element('#entityNamePlural')
         await element.clear()
@@ -18,7 +31,7 @@ module.exports = async (driver)=>{
         await query.sendKeys(options.xml)
         let fetch = await page.element('#read-button')
         fetch.click()
-        await page.wait(3 *1000)
+        await page.waitForResults()
         let result = await page.element('#message')
         let content = await result.getText()
         let data = []
@@ -36,7 +49,7 @@ module.exports = async (driver)=>{
         await id.sendKeys(options.id)
         let deleteButton = await page.element('#delete-button')
         await deleteButton.click()
-        await page.wait(3 *1000)
+        await page.waitForResults()
         let status = await page.element('#status')
         let message = await status.getText()
     }
@@ -49,7 +62,7 @@ module.exports = async (driver)=>{
         await data.sendKeys(JSON.stringify(options.json, null, 2))
         let create = await page.element('#create-button')
         create.click()
-        await page.wait(3 *1000)
+        await page.waitForResults()
         let status = await page.element('#status')
         let message = await status.getText()
     }
