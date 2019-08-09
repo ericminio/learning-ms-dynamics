@@ -18,22 +18,15 @@ module.exports = async (driver)=>{
         }
     }
     page.setCollection = async function(collection) {
-        let element = await page.element('#entityNamePlural')
-        await element.clear()
-        await element.sendKeys(collection)
+        await page.input('#entityNamePlural', collection)
     }
     page.read = async function(options) {
         await this.setCollection(options.collection)
-        let read = await page.element('#activate-read')
-        await read.click()
-        let query = await page.element('#fetch-xml-query')
-        await query.clear()
-        await query.sendKeys(options.xml)
-        let fetch = await page.element('#read-button')
-        fetch.click()
+        await page.click('#activate-read')
+        await page.input('#fetch-xml-query', options.xml)
+        await page.click('#read-button')
         await page.waitForResults()
-        let result = await page.element('#message')
-        let content = await result.getText()
+        let content = await page.content('#message')
         let data = []
         if (content != 'undefined') {
             data = JSON.parse(content).response.value
@@ -42,29 +35,17 @@ module.exports = async (driver)=>{
     }
     page.delete = async function(options) {
         await this.setCollection(options.collection)
-        let deletion = await page.element('#activate-delete')
-        deletion.click()
-        let id = await page.element('#id-to-be-deleted')
-        await id.clear()
-        await id.sendKeys(options.id)
-        let deleteButton = await page.element('#delete-button')
-        await deleteButton.click()
+        await page.click('#activate-delete')
+        await page.input('#id-to-be-deleted', options.id)
+        await page.click('#delete-button')
         await page.waitForResults()
-        let status = await page.element('#status')
-        let message = await status.getText()
     }
     page.create = async function(options) {
         await this.setCollection(options.collection)
-        let creation = await page.element('#activate-create')
-        creation.click()
-        let data = await page.element('#creation-payload')
-        await data.clear()
-        await data.sendKeys(JSON.stringify(options.json, null, 2))
-        let create = await page.element('#create-button')
-        create.click()
+        await page.click('#activate-create')
+        await page.input('#creation-payload', JSON.stringify(options.json, null, 2))
+        await page.click('#create-button')
         await page.waitForResults()
-        let status = await page.element('#status')
-        let message = await status.getText()
     }
 
     return page

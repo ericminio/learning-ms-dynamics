@@ -7,16 +7,21 @@ Page.prototype.open = async function(url) {
     await this.driver.get(url)
 }
 Page.prototype.input = async function(selector, value) {
-    let field = await this.driver.findElement(By.css(selector))
+    let field = await this.element(selector)
+    await field.clear()
     await field.sendKeys(value)
 }
 Page.prototype.click = async function(selector) {
-    let element = await this.driver.findElement(By.css(selector))
+    let element = await this.element(selector)
     await element.click()
 }
 Page.prototype.list = async function(selector) {
-    let elements = await this.driver.findElements(By.css(selector))
+    let elements = await this.elements(selector)
     return elements
+}
+Page.prototype.content = async function(selector) {
+    let element = await this.element(selector)
+    return await element.getText()
 }
 Page.prototype.source = async function() {
     return await this.driver.getPageSource()
