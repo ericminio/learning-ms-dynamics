@@ -22,6 +22,15 @@
                 display: inline-block;
                 width: 150px;
             }
+            .activated {
+                background-color: aliceblue;
+            }
+            .deactivated {
+                background-color: white;
+            }
+            .action {
+                background-color: aliceblue;
+            }
             .error {
                 background-color: red;
                 color: white;
@@ -87,6 +96,10 @@
                 sections.forEach((section)=> {
                     section.style.display = (`activate-${section.id}` == me.id) ? 'block' : 'none'
                 })
+                let choices = document.querySelectorAll('.choice')
+                choices.forEach((choice)=> {
+                    choice.className = (`${choice.id}` == me.id) ? 'choice activated' : 'choice deactivated'
+                })
             }
         </script>
     </head>
@@ -105,19 +118,19 @@
         <section id="create" class="crud">
             <label>Creation Payload</label>
             <textarea id="creation-payload" rows="20"></textarea>
-            <button type="button" id="create-button" onclick="executeCreate(document)">Create record</button>
+            <button type="button" id="create-button" class="action" onclick="executeCreate(document)">Create record</button>
         </section>
 
         <section id="read" class="crud">
             <label>Read</label>
             <textarea id="fetch-xml-query" rows="20"></textarea>
-            <button type="button" id="read-button" onclick="executeRead(document)">Fetch</button>
+            <button type="button" id="read-button" class="action" onclick="executeRead(document)">Fetch</button>
         </section>
 
         <section id="delete" class="crud">
             <label>Deletion</label>
             <input id="id-to-be-deleted" size="45" placeholder="record id"/>
-            <button type="button" id="delete-button" onclick="executeDelete(document)">Delete record</button>
+            <button type="button" id="delete-button" class="action" onclick="executeDelete(document)">Delete record</button>
         </section>
 
         <section id="results">
