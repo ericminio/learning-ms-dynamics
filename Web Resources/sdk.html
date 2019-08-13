@@ -140,7 +140,7 @@
                         indent --
                     }
                     else {
-                        if (previousTag && !previousTag.endsWith('/>')) {
+                        if (previousTag && !previousTag.startsWith('</') && !previousTag.endsWith('/>')) {
                             indent ++
                         }
                     }
