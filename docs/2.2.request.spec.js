@@ -1,27 +1,17 @@
 const { expect } = require('chai')
 const LocalServer = require('../support/local.server')
 const { bodyOf } = require('../support/message.body')
+const request = require('../support/expose')({
+    method:'Sdk.request',
+    inScriptTagContaining:'typeof Sdk',
+    inFile:require('path').join(__dirname, '..', 'Web Resources', 'sdk.html')
+})
 require('../support/fake.web')
 
 describe('Sdk Request', ()=> {
 
     var server
     var headers
-
-    var request
-
-    before(()=>{
-        let file = require('path').join(__dirname, '..', 'Web Resources', 'sdk.html')
-        let content = require('fs').readFileSync(file).toString()
-        let index = content.indexOf('typeof Sdk')
-        let before = content.substring(0, index)
-        let start = before.lastIndexOf('<script>')
-        let trailing = content.substring(start+'<script>'.length)
-        let endIndex = trailing.indexOf('</script>')
-        let script = trailing.substring(0, endIndex)
-
-        request = (new Function(`${script}; return Sdk.request;`))()
-    })
 
     beforeEach((done)=>{
         server = new LocalServer(async (req, response)=>{
