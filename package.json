@@ -18,7 +18,7 @@
   "homepage": "https://github.com/ericminio/learning-ms-dynamics#readme",
   "dependencies": {
     "chai": "^4.2.0",
-    "jsdom": "^15.1.1",
+    "jsdom": "^16.5.0",
     "mocha": "^6.2.0",
     "selenium-webdriver": "^4.0.0-alpha.4"
   }
